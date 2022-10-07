@@ -1,0 +1,33 @@
+# Based on https://github.com/qunabu/strapi-unit-test-example/blob/main/.github/workflows/test-cc.yml
+
+name: Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
+
+jobs:
+  tests-jest-integration:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Create env file
+        run: cp .env.ci .env
+
+      - name: Run Tests
+        run: yarn test
+        timeout-minutes: 3
